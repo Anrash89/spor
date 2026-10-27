@@ -1,0 +1,10 @@
+// All audio is synthesized locally. No samples, downloads, or licensed music.
+export class Sound {
+ constructor(){this.enabled=false;this.ctx=null;this.nextBeat=0;this.beat=0;this.lastImpact=0;}
+ async enable(on){this.enabled=on;if(on){if(!this.ctx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC){this.enabled=false;return false;}this.ctx=new AC();this.master=this.ctx.createGain();this.master.gain.value=.27;this.master.connect(this.ctx.destination);}try{await this.ctx.resume();}catch{this.enabled=false;}this.nextBeat=this.ctx.currentTime+.1;}else if(this.ctx){this.master.gain.setTargetAtTime(0,this.ctx.currentTime,.05);}if(this.enabled)this.master.gain.setTargetAtTime(.27,this.ctx.currentTime,.05);return this.enabled;}
+ tone(freq,duration=.2,type='sine',volume=.2,delay=0){if(!this.enabled||!this.ctx)return;let t=this.ctx.currentTime+delay;let o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(this.master);o.start(t);o.stop(t+duration+.03);o.onended=()=>{o.disconnect();g.disconnect();};}
+ tick(racing){if(!this.enabled||!this.ctx||!racing)return;const t=this.ctx.currentTime;if(t>=this.nextBeat){this.nextBeat=t+.32;const notes=[261.63,329.63,392,440,523.25,440,392,329.63];this.tone(notes[this.beat%8],.22,'sine',.045);if(this.beat%4===0)this.tone(130.81,.4,'triangle',.06);this.beat++;}}
+ event(type){if(!this.enabled||!this.ctx)return;const t=this.ctx.currentTime;if(type==='hit'){if(t-this.lastImpact<.07)return;this.lastImpact=t;this.tone(90,.09,'triangle',.28);this.tone(185,.05,'sine',.15);}if(type==='boost'){this.tone(520,.12,'sine',.09);this.tone(780,.18,'sine',.07,.08);}if(type==='jump')this.tone(350,.2,'sine',.05);if(type==='respawn'){this.tone(220,.1,'triangle',.12);this.tone(330,.1,'triangle',.1,.12);}if(type==='repair')this.tone(660,.18,'sine',.05);}
+ countdown(n){this.tone(n===0?880:440,n===0?.4:.15,'sine',.22);}
+ win(){[523.25,659.25,783.99,1046.5].forEach((n,i)=>this.tone(n,.45,'triangle',.15,i*.13));}
+}

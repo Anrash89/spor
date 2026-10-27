@@ -1,0 +1,14 @@
+{
+  "name": "let-it-roll",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A deterministic, illustrated 3D marble decision race. No build or server required.",
+  "scripts": {
+    "test": "node tests.mjs",
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}
