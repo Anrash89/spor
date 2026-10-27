@@ -1,9 +1,9 @@
 {
-  "name": "let-it-roll",
-  "version": "1.0.0",
+  "name": "marble-circuit",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "A deterministic, illustrated 3D marble decision race. No build or server required.",
+  "description": "Procedural futuristic 3D marble racing with physical contacts and seeded replay.",
   "scripts": {
     "test": "node tests.mjs",
     "build": "node build.mjs"
